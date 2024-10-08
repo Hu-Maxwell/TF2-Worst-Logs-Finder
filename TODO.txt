@@ -1,3 +1,10 @@
-- make the text slide in from the left
-- learn how to use c++ or python instead of javascript
-- link to a different part of the site  
+1. link to a different part of the site  
+
+
+
+
+2. learn how to use c++ or python instead of javascript
+3. logic for finding best / worst log and graphing 
+3. each part of the tf2 logo is a button
+    - top left: "worst"         top right: "best"
+    - bottom left: "graph"      bottom right: "search"

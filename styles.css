@@ -33,13 +33,6 @@ body {
     color: #c1a18a; 
 }
 
-#introduction {
-    color: #bd3b3b;
-    font-size: 24px;   
-    line-height: 1.6;
-    padding-left: 32px;
-}
-
 .slide-in-text {
     animation: slideInFromLeft 1s ease-out;
 }
@@ -81,6 +74,13 @@ li {
     width: 400px; /* Set the width of the search bar */
     border: 2px solid #34302d; /* Border styling */
     border-radius: 5px; /* Rounded corners */
+}
+
+#FAQ {
+    color: #bd3b3b;
+    font-size: 24px;   
+    line-height: 1.6;
+    padding-left: 32px;
 }
 
 main {
