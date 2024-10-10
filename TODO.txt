@@ -1,5 +1,7 @@
-1. learn how to use c++ or python instead of javascript
-2. logic for finding best / worst log and graphing 
-3. each part of the tf2 logo is a button
+1. logic for finding best / worst log and graphing 
+2. each part of the tf2 logo is a button
     - top left: "worst"         top right: "best"
     - bottom left: "graph"      bottom right: "search"
+
+
+I HATE DEPENDENCIES I HATE CMAKE I HATE CMAKE I HATE CMAKE I HATE 
