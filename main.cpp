@@ -46,6 +46,10 @@ int main() {
         return res;
     });
 
+    CROW_ROUTE(app, "/api/helloworld")([](){
+        return crow::response("Hello, world!");
+    });
+
     // Start the Crow server on port 8080
     app.port(8080).multithreaded().run();
 }
