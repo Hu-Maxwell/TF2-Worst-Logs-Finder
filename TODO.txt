@@ -5,3 +5,32 @@
 
 
 I HATE DEPENDENCIES I HATE CMAKE I HATE CMAKE I HATE CMAKE I HATE 
+
+How to install crow: 
+
+settings.json:
+
+{
+    "cmake.configureSettings": {
+        "CMAKE_TOOLCHAIN_FILE":"C:/VCPKG/vcpkg/scripts/buildsystems/vcpkg.cmake"
+    }
+}
+
+control+shift+p -> cmake: configure
+open build, open the .sln file in visual studio
+build it in visual studio 
+
+set (inside configuration) launch.json to: 
+        {
+            "name": "C++ Launch (Windows)",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "PATH TO BUILD FILE HERE!!!!!!!!!!!!!!!!!!!",
+            "externalConsole": true,
+            "logging": {
+              "moduleLoad": false,
+              "trace": true
+            },
+            "visualizerFile": "${workspaceFolder}/my.natvis",
+            "cwd": "${workspaceFolder}"
+        }
