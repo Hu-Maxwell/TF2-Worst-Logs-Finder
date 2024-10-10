@@ -1,0 +1,106 @@
+@font-face {
+    font-family: 'TF2Build';
+    src: url('tf2build.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@keyframes slideInFromLeft{
+    0% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0%); 
+        opacity: 1; 
+    }  
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f5e7de;
+    font-family: 'TF2Build'; 
+    margin: 0;
+    text-align: left;
+}
+
+#main-header {
+    background-color: #34302d; /* Green background color */
+    padding: 20px; /* Add padding inside the header */
+    text-align: center; /* Center align the header content */
+    color: #c1a18a; 
+}
+
+.slide-in-text {
+    animation: slideInFromLeft 1s ease-out;
+}
+
+ul {
+    list-style-type: none;
+    padding-left: 32px;
+}
+
+li {
+    color: #395c78;
+    font-size: 20px;   
+    line-height: 1.6;
+}
+ 
+.image-container {
+    position: relative; 
+    display: block; 
+    text-align: center; 
+}
+
+.tf2-logo {
+    display: block; 
+    width: 600px; 
+    height: auto; 
+    margin: 0 auto; 
+}
+
+.search-bar-container {
+    position: absolute;
+    top: 51%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(8deg);
+}
+
+.search-bar {
+    padding: 5px;
+    font-size: 16px;
+    width: 400px; /* Set the width of the search bar */
+    border: 2px solid #34302d; /* Border styling */
+    border-radius: 5px; /* Rounded corners */
+}
+
+#FAQ {
+    color: #bd3b3b;
+    font-size: 24px;   
+    line-height: 1.6;
+    padding-left: 32px;
+}
+
+main {
+    flex-grow: 1;
+}
+
+footer {
+    background-color: #34302d; 
+    color: #c1a18a;
+    font-size: 12px;   
+    line-height: 0.8;
+    padding: 4px;
+    text-align: center;
+}
+
+a {
+    color: #dabdab;
+    text-decoration: none; 
+}
+
+a:hover {
+   text-decoration: underline; 
+}
