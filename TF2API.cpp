@@ -1,12 +1,3 @@
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <string>
-
-#include "crow.h"
-#include <curl/curl.h>
-#include <nlohmann/json.hpp>
-
 #include "TF2API.hpp"
 
 std::string read_file(const std::string& filepath) {
@@ -67,3 +58,17 @@ std::string getDPM() {
     curl_global_cleanup();
     return DPMString; 
 }
+
+
+// to get worst log
+// search all the logs of a single person
+// get all log IDs 
+// float totalLogs = jsonResponse["Logs"].size();
+// float logs[totalLogs]
+
+// for each log id, 
+    // average the DPM for all classes except medic and player. (if type != "medic") 
+    // compare player's DPM to average DPM.
+    // if it's the lowest so far, store it in lowestRatioDPM
+
+// print lowestRatioDPM. 
