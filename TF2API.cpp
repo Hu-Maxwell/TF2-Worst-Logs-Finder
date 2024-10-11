@@ -17,16 +17,52 @@ size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* buf
     return newLength;
 }
 
+float getTotalLogs() {
+    // playerID is NOT playerUID
+    std::string playerID = "76561198391933308"; 
+
+    // http://logs.tf/api/v1/log?title=X&uploader=Y&player=Z&limit=N&offset=N 
+    // MUST BE LIMITED! or else memory will be exceeded in jsonResponse and it'll return a 500. 
+    std::string apiUrl = "https://logs.tf/api/v1/log?limit=0&player=" + playerID;
+
+    CURL* curl;
+    CURLcode res;
+    std::string responseString;
+ 
+    curl_global_init(CURL_GLOBAL_DEFAULT);
+    curl = curl_easy_init();
+
+    float totalLogs = 0;
+    if(curl) {
+        curl_easy_setopt(curl, CURLOPT_URL, apiUrl.c_str());
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &responseString);
+ 
+        res = curl_easy_perform(curl);
+ 
+        if(res != CURLE_OK) {
+            std::cerr << "Failed." << curl_easy_strerror(res) << std::endl;
+        } else {
+            auto jsonResponse = nlohmann::json::parse(responseString);
+            totalLogs = jsonResponse["total"]; 
+         }
+ 
+        curl_easy_cleanup(curl);
+    }
+ 
+    curl_global_cleanup();
+    return totalLogs; 
+}
+
 std::string getDPM() {
     std::string logID = "3732357";
     std::string playerUID = "[U:1:431667580]"; 
  
-    // http://logs.tf/api/v1/log?title=X&uploader=Y&player=Z&limit=N&offset=N 
+    // http://logs.tf/api/v1/log/<log_id> or http://logs.tf/json/<log_id> 
     std::string apiUrl = "https://logs.tf/api/v1/log/" + logID;
 
     // dewe's UID
     // [U:1:431667580]
-
  
     CURL* curl;
     CURLcode res;
@@ -47,9 +83,10 @@ std::string getDPM() {
             std::cerr << "Failed." << curl_easy_strerror(res) << std::endl;
         } else {
             auto jsonResponse = nlohmann::json::parse(responseString);
- 
+
+            float totalLogs = getTotalLogs(); 
             float DPM = jsonResponse["players"][playerUID]["dapm"];
-            DPMString = "The DPM you hit in this log was " + std::to_string(DPM) + ".";
+            DPMString = "The DPM you hit in this log was " + std::to_string(DPM) + ". You have " + std::to_string(totalLogs) + " logs played.";
          }
  
         curl_easy_cleanup(curl);
@@ -63,7 +100,7 @@ std::string getDPM() {
 // to get worst log
 // search all the logs of a single person
 // get all log IDs 
-// float totalLogs = jsonResponse["Logs"].size();
+// float totalLogs = jsonResponse["logs"].size();
 // float logs[totalLogs]
 
 // for each log id, 
