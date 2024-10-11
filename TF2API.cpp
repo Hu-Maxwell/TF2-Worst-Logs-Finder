@@ -22,7 +22,8 @@ float getTotalLogs() {
     std::string playerID = "76561198391933308"; 
 
     // http://logs.tf/api/v1/log?title=X&uploader=Y&player=Z&limit=N&offset=N 
-    // MUST BE LIMITED! or else memory will be exceeded in jsonResponse and it'll return a 500. 
+    // limiting the logs makes it faster
+    // sometimes, if not limited, it returns a 500 server error.
     std::string apiUrl = "https://logs.tf/api/v1/log?limit=0&player=" + playerID;
 
     CURL* curl;
