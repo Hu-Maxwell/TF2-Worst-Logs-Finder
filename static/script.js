@@ -1,4 +1,4 @@
-fetch('/api/helloworld')
+fetch('/api/DPM')
     .then(response => response.text())  
     .then(data => {
         document.getElementById('message').innerText = data;
