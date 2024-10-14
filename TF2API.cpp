@@ -66,37 +66,43 @@ std::string getDPM() {
 
     std::string DPMresults = ""; 
 
-    for(int i = 0; i < 10; i++) {        
-        CURL* curl = curl_easy_init();  
-        if (!curl) {
-            std::cerr << "Failed." << std::endl;
-            continue;  // skip failed log
-        }
+    const int totalLogs = 5;
 
-        std::string responseString;
-        CURLcode res;
+    CURLM* multi_handle;
+    std::vector<CURL*> curls(totalLogs);
+    std::vector<std::string> responseStrings(totalLogs);  
+    CURLcode res;
 
+    multi_handle = curl_multi_init();
+
+    for (int i = 0; i < totalLogs; i++) {
         int logID = logIDs[i];
         std::string apiUrl = "https://logs.tf/api/v1/log/" + std::to_string(logID);
 
-        curl_easy_setopt(curl, CURLOPT_URL, apiUrl.c_str());
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &responseString);
-    
-        res = curl_easy_perform(curl);
-    
-        if(res != CURLE_OK) {
-            std::cerr << "Failed: " << curl_easy_strerror(res) << std::endl;
-        } else {
-            auto jsonResponse = nlohmann::json::parse(responseString);
-            int DPM = jsonResponse["players"][playerUID]["dapm"];
-                
-            DPMresults = DPMresults + "Log ID " + std::to_string(logID) + ": DPM is " + std::to_string(DPM) + "\n";
-        }
-    
-        curl_easy_cleanup(curl);
+        curls[i] = curl_easy_init();
+        curl_easy_setopt(curls[i], CURLOPT_URL, apiUrl.c_str());
+        curl_easy_setopt(curls[i], CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curls[i], CURLOPT_WRITEDATA, &responseStrings[i]);
+
+        curl_multi_add_handle(multi_handle, curls[i]);
     }
 
+    int still_running = 0;
+    do {
+        curl_multi_perform(multi_handle, &still_running);
+    } while (still_running);
+
+
+    for(int i = 0; i < totalLogs; i++) {        
+        curl_multi_remove_handle(multi_handle, curls[i]);
+        curl_easy_cleanup(curls[i]);
+
+        auto jsonResponse = nlohmann::json::parse(responseStrings[i]);
+        int DPM = jsonResponse["players"][playerUID]["dapm"];
+        DPMresults = DPMresults + "Log ID " + std::to_string(logIDs[i]) + ": DPM is " + std::to_string(DPM) + "\n";
+    }
+
+    curl_multi_cleanup(multi_handle); 
     return DPMresults; 
 }
 

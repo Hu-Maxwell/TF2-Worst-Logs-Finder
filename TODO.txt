@@ -1,4 +1,4 @@
-1. call multi curl thing
+1. set batch size of 5
 2. logic for finding best / worst log and graphing 
 3. each part of the tf2 logo is a button
     - top left: "worst"         top right: "best"
