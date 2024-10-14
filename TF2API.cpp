@@ -61,51 +61,43 @@ std::vector<int> getTotalLogs() {
 }
 
 std::string getDPM() {
-    std::string logID = "3732357";
     std::string playerUID = "[U:1:431667580]"; 
- 
-    // http://logs.tf/api/v1/log/<log_id> or http://logs.tf/json/<log_id> 
-    std::string apiUrl = "https://logs.tf/api/v1/log/" + logID;
+    std::vector<int> logIDs = getTotalLogs();
 
-    // dewe's UID
-    // [U:1:431667580]
- 
-    CURL* curl;
-    CURLcode res;
-    std::string responseString;
- 
-    curl_global_init(CURL_GLOBAL_DEFAULT);
-    curl = curl_easy_init();
+    std::string DPMresults = ""; 
 
-    std::string DPMString;
-    if(curl) {
+    for(int i = 0; i < 10; i++) {        
+        CURL* curl = curl_easy_init();  
+        if (!curl) {
+            std::cerr << "Failed." << std::endl;
+            continue;  // skip failed log
+        }
+
+        std::string responseString;
+        CURLcode res;
+
+        int logID = logIDs[i];
+        std::string apiUrl = "https://logs.tf/api/v1/log/" + std::to_string(logID);
+
         curl_easy_setopt(curl, CURLOPT_URL, apiUrl.c_str());
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &responseString);
- 
+    
         res = curl_easy_perform(curl);
- 
+    
         if(res != CURLE_OK) {
-            std::cerr << "Failed." << curl_easy_strerror(res) << std::endl;
+            std::cerr << "Failed: " << curl_easy_strerror(res) << std::endl;
         } else {
             auto jsonResponse = nlohmann::json::parse(responseString);
-
-            std::vector<int> logIDs = getTotalLogs(); 
-            std::string logString = ""; 
-            for(int i = 0; i < 100; i++) {
-                logString = logString + " " + std::to_string(logIDs[i]); 
-            }
-
             int DPM = jsonResponse["players"][playerUID]["dapm"];
-            
-            DPMString = "The DPM you hit in this log was " + std::to_string(DPM) + "Log IDs are: " + logString;
-         }
- 
+                
+            DPMresults = DPMresults + "Log ID " + std::to_string(logID) + ": DPM is " + std::to_string(DPM) + "\n";
+        }
+    
         curl_easy_cleanup(curl);
     }
- 
-    curl_global_cleanup();
-    return DPMString; 
+
+    return DPMresults; 
 }
 
 
