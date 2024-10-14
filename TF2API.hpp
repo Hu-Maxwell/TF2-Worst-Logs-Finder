@@ -12,7 +12,7 @@
 
 std::string read_file(const std::string& filepath);
 size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* buffer);
-// float getTotalLogs(); 
+std::vector<int> getTotalLogs();
 std::string getDPM();
 
 #endif

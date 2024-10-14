@@ -17,13 +17,15 @@ size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* buf
     return newLength;
 }
 
-float getTotalLogs() {
+// todo: change it so that it returns an array of all the log ids 
+std::vector<int> getTotalLogs() {
     // playerID is NOT playerUID
+    std::vector<int> logIDs; 
     std::string playerID = "76561198391933308"; 
 
     // http://logs.tf/api/v1/log?title=X&uploader=Y&player=Z&limit=N&offset=N 
-    // MUST BE LIMITED! or else memory will be exceeded in jsonResponse and it'll return a 500. 
-    std::string apiUrl = "https://logs.tf/api/v1/log?limit=0&player=" + playerID;
+    // should be limited if not using all of it! else it will be slow.  
+    std::string apiUrl = "https://logs.tf/api/v1/log?player=" + playerID;
 
     CURL* curl;
     CURLcode res;
@@ -32,7 +34,7 @@ float getTotalLogs() {
     curl_global_init(CURL_GLOBAL_DEFAULT);
     curl = curl_easy_init();
 
-    float totalLogs = 0;
+    int totalLogs = 0;
     if(curl) {
         curl_easy_setopt(curl, CURLOPT_URL, apiUrl.c_str());
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
@@ -45,13 +47,17 @@ float getTotalLogs() {
         } else {
             auto jsonResponse = nlohmann::json::parse(responseString);
             totalLogs = jsonResponse["total"]; 
+
+            for(int i = 0; i < totalLogs - 1; i++) {
+                logIDs.push_back(jsonResponse["logs"][i]["id"]);
+            }
          }
  
         curl_easy_cleanup(curl);
     }
  
     curl_global_cleanup();
-    return totalLogs; 
+    return logIDs; 
 }
 
 std::string getDPM() {
@@ -84,9 +90,15 @@ std::string getDPM() {
         } else {
             auto jsonResponse = nlohmann::json::parse(responseString);
 
-            float totalLogs = getTotalLogs(); 
-            float DPM = jsonResponse["players"][playerUID]["dapm"];
-            DPMString = "The DPM you hit in this log was " + std::to_string(DPM) + ". You have " + std::to_string(totalLogs) + " logs played.";
+            std::vector<int> logIDs = getTotalLogs(); 
+            std::string logString = ""; 
+            for(int i = 0; i < 100; i++) {
+                logString = logString + " " + std::to_string(logIDs[i]); 
+            }
+
+            int DPM = jsonResponse["players"][playerUID]["dapm"];
+            
+            DPMString = "The DPM you hit in this log was " + std::to_string(DPM) + "Log IDs are: " + logString;
          }
  
         curl_easy_cleanup(curl);
