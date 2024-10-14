@@ -66,42 +66,46 @@ std::string getDPM() {
 
     std::string DPMresults = ""; 
 
-    const int totalLogs = 5;
+    const int totalLogs = 1;
+    const int batchSize = 5; 
 
     CURLM* multi_handle;
-    std::vector<CURL*> curls(totalLogs);
-    std::vector<std::string> responseStrings(totalLogs);  
-    CURLcode res;
+    CURL* curls[batchSize];
+    std::string responseStrings[batchSize]; 
 
     multi_handle = curl_multi_init();
 
-    for (int i = 0; i < totalLogs; i++) {
-        int logID = logIDs[i];
-        std::string apiUrl = "https://logs.tf/api/v1/log/" + std::to_string(logID);
+    for (int start = 0; start < logIDs.size(); start += batchSize) {
+        int curBatchSize = std::min(batchSize, (int)(logIDs.size() - start));
 
-        curls[i] = curl_easy_init();
-        curl_easy_setopt(curls[i], CURLOPT_URL, apiUrl.c_str());
-        curl_easy_setopt(curls[i], CURLOPT_WRITEFUNCTION, WriteCallback);
-        curl_easy_setopt(curls[i], CURLOPT_WRITEDATA, &responseStrings[i]);
+        for (int i = 0; i < curBatchSize; i++) {
+            int logID = logIDs[start + i];
+            std::string apiUrl = "https://logs.tf/api/v1/log/" + std::to_string(logID);
 
-        curl_multi_add_handle(multi_handle, curls[i]);
+            curls[i] = curl_easy_init();
+            curl_easy_setopt(curls[i], CURLOPT_URL, apiUrl.c_str());
+            curl_easy_setopt(curls[i], CURLOPT_WRITEFUNCTION, WriteCallback);
+            curl_easy_setopt(curls[i], CURLOPT_WRITEDATA, &responseStrings[i]);
+
+            curl_multi_add_handle(multi_handle, curls[i]);
+        }
+
+        int still_running = 0;
+        do {
+            curl_multi_perform(multi_handle, &still_running);
+        } while (still_running);
+
+        for(int i = 0; i < curBatchSize; i++) {        
+            curl_multi_remove_handle(multi_handle, curls[i]);
+            curl_easy_cleanup(curls[i]);
+
+            auto jsonResponse = nlohmann::json::parse(responseStrings[i]);
+            int DPM = jsonResponse["players"][playerUID]["dapm"];
+            DPMresults = DPMresults + "Log ID " + std::to_string(logIDs[start + i]) + ": DPM is " + std::to_string(DPM) + "\n";
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(100)); 
     }
-
-    int still_running = 0;
-    do {
-        curl_multi_perform(multi_handle, &still_running);
-    } while (still_running);
-
-
-    for(int i = 0; i < totalLogs; i++) {        
-        curl_multi_remove_handle(multi_handle, curls[i]);
-        curl_easy_cleanup(curls[i]);
-
-        auto jsonResponse = nlohmann::json::parse(responseStrings[i]);
-        int DPM = jsonResponse["players"][playerUID]["dapm"];
-        DPMresults = DPMresults + "Log ID " + std::to_string(logIDs[i]) + ": DPM is " + std::to_string(DPM) + "\n";
-    }
-
     curl_multi_cleanup(multi_handle); 
     return DPMresults; 
 }
