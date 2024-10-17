@@ -5,7 +5,6 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <vector>
 
 #include "crow.h"
 #include <curl/curl.h>
