@@ -1,3 +1,8 @@
+html, body {
+    overflow: hidden; 
+    height: 100%;     
+}
+
 @font-face {
     font-family: 'TF2Build';
     src: url('tf2build.ttf') format('truetype');
@@ -18,14 +23,30 @@
 
 @keyframes rotation {
     from {
-      transform: rotate(0deg);
+        transform: rotate(0deg);
     }
     to {
-      transform: rotate(359deg);
+        transform: rotate(360deg);
     }
 }
 
+@keyframes zoomIn {
+    0% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(50);
+    }
+}
 
+.rotate-effect {
+    animation: rotation 8s infinite linear;
+    position: absolute;
+}
+
+.zoom-effect {
+    animation: zoomIn .05s forwards ease-in-out;
+}
 
 body {
     display: flex;
@@ -38,9 +59,9 @@ body {
 }
 
 #main-header {
-    background-color: #34302d; /* Green background color */
-    padding: 20px; /* Add padding inside the header */
-    text-align: center; /* Center align the header content */
+    background-color: #34302d; 
+    padding: 20px; 
+    text-align: center; 
     color: #c1a18a; 
 }
 
@@ -59,18 +80,19 @@ li {
     line-height: 1.6;
 }
  
-.image-container {
-    position: relative; 
-    display: block; 
-    text-align: center; 
-}
-
 .tf2-logo {
-    display: block; 
     width: 600px; 
     height: auto; 
-    margin: 0 auto; 
-    animation: rotation 8s infinite linear;
+    margin: 0 auto;
+}
+
+.logo-container.zoom-effect {
+    animation: zoomIn 5s forwards ease-in-out;
+}
+
+.image-container {
+    position: relative; 
+    text-align: center; 
 }
 
 .search-bar-container {
@@ -83,9 +105,9 @@ li {
 .search-bar {
     padding: 5px;
     font-size: 16px;
-    width: 400px; /* Set the width of the search bar */
-    border: 2px solid #34302d; /* Border styling */
-    border-radius: 5px; /* Rounded corners */
+    width: 400px; 
+    border: 2px solid #34302d;
+    border-radius: 5px; 
 }
 
 #FAQ {
