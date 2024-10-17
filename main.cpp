@@ -33,10 +33,16 @@ int main() {
         return res;
     });
 
-    std::string DPMString;
-    CROW_ROUTE(app, "/api/DPM")([&DPMString](){
-        DPMString = getDPM();
-        return crow::response(DPMString.c_str());
+    std::vector<std::pair<std::string, float>> topFiveWorstLogs; 
+    CROW_ROUTE(app, "/api/DPM")([&topFiveWorstLogs](){
+        topFiveWorstLogs = getDPM();
+
+        std::ostringstream log;
+        for(const auto& ratioDPM : topFiveWorstLogs) {
+            log << "https://logs.tf/" << ratioDPM.first << ", DPM: " << ratioDPM.second << "\n";
+        }
+
+        return crow::response(log.str());
     });
 
     // Start the Crow server on port 8080

@@ -12,7 +12,8 @@
 
 std::string read_file(const std::string& filepath);
 size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* buffer);
-// float getTotalLogs(); 
-std::string getDPM();
+std::vector<std::string> getTotalLogs();
+std::vector<std::pair<std::string, float>> getTopFiveWorstLogs(std::vector<std::pair<std::string, float>> ratioVectorDPM);
+std::vector<std::pair<std::string, float>> getDPM();
 
 #endif
